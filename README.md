@@ -2,6 +2,8 @@
 
 The game from my childhood.
 
+![alt text](http://www.atariarchives.org/basicgames/pages/page4.gif "Title")
+
 The Animal Game predates the personal computer by many years,
 going back at least to the early 70's.
 
