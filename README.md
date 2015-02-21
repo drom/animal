@@ -2,6 +2,8 @@
 
 The game from my childhood.
 
+Rewrite from BASIC GOTO-Hell into JavaScript CallBack-hell
+
 ![alt text](http://www.atariarchives.org/basicgames/pages/page4.gif "Title")
 
 The Animal Game predates the personal computer by many years,
