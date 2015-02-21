@@ -1,0 +1,12 @@
+{
+    "start": "PLAY 'GUESS THE ANIMAL' WITH RSTS\nTHINK OF AN ANIMAL AND THE COMPUTER WILL TRY TO GUESS IT...",
+    "mood": "ARE YOU THINKING OF AN ANIMAL? PLEASE RESPOND 'YES', 'NO', OR 'LIST' ",
+    "isItA": "IS IT A ",
+    "again": "WHY NOT TRY ANOTHER ANIMAL",
+    "known": "ANIMALS I ALREADY KNOW ARE:\n",
+    "right": "THE ANIMAL YOU WERE THINKING OF WAS A? ",
+    "distinguish": "PLEASE TYPE IN A QUESTION THAT WOULD DISTINGUISH A ",
+    "fromA":  " FROM A ",
+    "exit": "O.K.  SEE YOU LATER.  HOPE YOU HAD FUN PLAYING!!",
+    "data": ["DOES IT SWIM", "FISH", "BIRD"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "animal",
+  "version": "0.0.1",
+  "description": "Animal game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "drom",
+  "license": "MIT"
+}
