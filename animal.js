@@ -16,18 +16,19 @@ var data = msg.data;
 
 var start, traverse;
 
-traverse = function (node, parent, index) {
+traverse = function (parent, path) {
+    var node = parent[path];
     if (typeof node === 'string') {
-        rl.question(msg.isItA + node + '? ', function (answer) {
+        rl.question(msg.isItA + node + ' ? ', function (answer) {
             if (answer.match('y')) { // yes
                 console.log(msg.again);
                 start();
             } else {
-                rl.question(msg.right, function(a) {
+                rl.question(msg.itWas, function(itWas) {
                     rl.question(
-                        msg.distinguish + a + msg.fromA + node + ': ',
-                        function (q) {
-                            parent[index] = [q, a, node];
+                        msg.differ + itWas + msg.fromA + node + ': ',
+                        function (differ) {
+                            parent[path] = [differ, itWas, node];
                             console.log(msg.again);
                             start();
                         }
@@ -36,11 +37,11 @@ traverse = function (node, parent, index) {
             }
         });
     } else {
-        rl.question(node[0] + '? ', function(answer) {
+        rl.question(node[0] + ' ? ', function(answer) {
             if (answer.match('y')) { // yes
-                traverse(node[1], node, 1);
+                traverse(node, 1);
             } else {
-                traverse(node[2], node, 2);
+                traverse(node, 2);
             }
         });
     }
@@ -53,7 +54,7 @@ start = function () {
             start();
         } else {
             if (answer.match('y')) { // yes
-                traverse(data);
+                traverse(msg, 'data');
             } else {
                 console.log(msg.exit);
                 rl.close();
