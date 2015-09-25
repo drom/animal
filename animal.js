@@ -12,8 +12,6 @@ var rl = readline.createInterface({
     output: process.stdout
 });
 
-var data = msg.data;
-
 var start, traverse;
 
 traverse = function (parent, path) {
@@ -50,7 +48,7 @@ traverse = function (parent, path) {
 start = function () {
     rl.question(msg.mood, function(answer) {
         if (answer.match('l')) { // list
-            console.log(msg.known + JSON.stringify(data, null, 4));
+            console.log(msg.known + JSON.stringify(msg.data, null, 4));
             start();
         } else {
             if (answer.match('y')) { // yes
