@@ -33,6 +33,8 @@ var questions = []Question{
 	},
 }
 
+//properties
+
 var reader = bufio.NewReader(os.Stdin) //we'll be needing this
 
 //funcs
@@ -54,7 +56,7 @@ func main() {
 			//output the animal list and then ask again
 			listKnownAnimals()
 		case "y": //Yes
-			askQuestion(0)
+			askQuestions()
 		default:
 			fmt.Println("I don't recognise that command")
 		}
@@ -73,7 +75,27 @@ func listKnownAnimals() {
 	}
 }
 
-func askQuestion(i int) {
+func askQuestions() {
+	//I guess we could do this properly recursively but meh
+
+	qIndex := 0
+	t := askQuestion(qIndex) //Ask the first question
+
+	//ask a question or guess an animal
+	for t.Type == "q" {
+		qIndex = t.Index //store this, in case t comes back as Type "a"
+		t = askQuestion(qIndex)
+	}
+
+	if guessAnimal(t.Index) {
+		fmt.Println("Why not try another animal?")
+	} else {
+		//Guess was wrong, let's learn a new animal
+		learnNewAnimal(qIndex, t.Index)
+	}
+}
+
+func askQuestion(i int) *Target {
 	var t *Target
 
 	q := questions[i]
@@ -91,17 +113,12 @@ func askQuestion(i int) {
 		}
 	}
 
-	//ask a question or guess an animal
-	if t.Type == "a" {
-		guessAnimal(t.Index)
-	} else {
-		askQuestion(t.Index)
-	}
+	return t
 }
 
 func guessAnimal(i int) bool {
 	for true {
-		fmt.Println("Is " + animals[i] + " your animal?")
+		fmt.Println("Is your animal " + withArticle(animals[i]) + "?")
 
 		switch strings.ToLower(getInput())[:1] {
 		case "n": //No
@@ -118,7 +135,69 @@ func guessAnimal(i int) bool {
 	return false
 }
 
+func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
+	fmt.Println("What is the animal you were thinking of called?") //nicer grammar than original
+	a := getInput()
+
+	//add to the animals array so it has an Index
+	newAi := len(animals)
+	animals = append(animals, a)
+
+	//build a new question
+	fmt.Println("Please type a Yes/No question that would distinguish " + withArticle(a) + " from " + withArticle(animals[ai]) + ":")
+	q := getInput()
+
+	//find out which route
+	var yesTarget Target
+	var noTarget Target
+	answered := false
+
+	for !answered {
+		fmt.Println("Please type the answer for " + withArticle(a) + ":")
+		switch strings.ToLower(getInput())[:1] {
+		case "n": //No
+			noTarget = Target{Type: "a", Index: newAi}
+			yesTarget = Target{Type: "a", Index: ai}
+			answered = true
+		case "y": //Yes
+			yesTarget = Target{Type: "a", Index: newAi}
+			noTarget = Target{Type: "a", Index: ai}
+			answered = true
+		default:
+			fmt.Println("Please answer yes or no.")
+		}
+	}
+
+	q = strings.TrimRight(q, "?") //we add our own ? during question time
+
+	//add the new question
+	newQi := len(questions)
+	questions = append(questions, Question{Question: q, YesTarget: yesTarget, NoTarget: noTarget})
+
+	//amend the old question
+	if questions[qi].YesTarget.Type == "a" && questions[qi].YesTarget.Index == ai {
+		questions[qi].YesTarget.Type = "q"
+		questions[qi].YesTarget.Index = newQi
+	} else {
+		questions[qi].NoTarget.Type = "q"
+		questions[qi].NoTarget.Index = newQi
+	}
+}
+
+func getArticle(noun string) string {
+	if strings.ContainsAny(noun[:1], "AEIOUHaeiouh") {
+		return "an"
+	}
+
+	return "a"
+}
+
+func withArticle(noun string) string {
+	return getArticle(noun) + " " + noun
+}
+
 func getInput() (input string) {
 	input, _ = reader.ReadString('\n')
+	input = strings.TrimRight(input, "\r\n")
 	return
 }
