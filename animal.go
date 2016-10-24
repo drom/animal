@@ -100,39 +100,17 @@ func askQuestion(i int) *Target {
 
 	q := questions[i]
 
-	for t == nil {
-		fmt.Println(q.Question + "?")
-
-		switch strings.ToLower(getInput())[:1] {
-		case "n": //No
-			t = &q.NoTarget
-		case "y": //Yes
-			t = &q.YesTarget
-		default:
-			fmt.Println("Please answer yes or no.")
-		}
+	if askYesNoQuestion(q.Question + "?") {
+		t = &q.YesTarget
+	} else {
+		t = &q.NoTarget
 	}
 
 	return t
 }
 
 func guessAnimal(i int) bool {
-	for true {
-		fmt.Println("Is your animal " + withArticle(animals[i]) + "?")
-
-		switch strings.ToLower(getInput())[:1] {
-		case "n": //No
-			return false
-		case "y": //Yes
-			return true
-		default:
-			fmt.Println("Please answer yes or no.")
-		}
-	}
-
-	//this is impossible to reach, as the loop is infinite unless return is triggered by a case
-	//but golint wants a return statement
-	return false
+	return askYesNoQuestion("Is your animal " + withArticle(animals[i]) + "?")
 }
 
 func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
@@ -150,22 +128,13 @@ func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
 	//find out which route
 	var yesTarget Target
 	var noTarget Target
-	answered := false
 
-	for !answered {
-		fmt.Println("Please type the answer for " + withArticle(a) + ":")
-		switch strings.ToLower(getInput())[:1] {
-		case "n": //No
-			noTarget = Target{Type: "a", Index: newAi}
-			yesTarget = Target{Type: "a", Index: ai}
-			answered = true
-		case "y": //Yes
-			yesTarget = Target{Type: "a", Index: newAi}
-			noTarget = Target{Type: "a", Index: ai}
-			answered = true
-		default:
-			fmt.Println("Please answer yes or no.")
-		}
+	if askYesNoQuestion("Please type the answer for " + withArticle(a) + ":") {
+		yesTarget = Target{Type: "a", Index: newAi}
+		noTarget = Target{Type: "a", Index: ai}
+	} else {
+		noTarget = Target{Type: "a", Index: newAi}
+		yesTarget = Target{Type: "a", Index: ai}
 	}
 
 	q = strings.TrimRight(q, "?") //we add our own ? during question time
@@ -200,4 +169,23 @@ func getInput() (input string) {
 	input, _ = reader.ReadString('\n')
 	input = strings.TrimRight(input, "\r\n")
 	return
+}
+
+func askYesNoQuestion(question string) bool {
+	for true {
+		fmt.Println(question)
+
+		switch strings.ToLower(getInput())[:1] {
+		case "n": //No
+			return false
+		case "y": //Yes
+			return true
+		default:
+			fmt.Println("Please answer yes or no.")
+		}
+	}
+
+	//this is impossible to reach, as the loop is infinite unless return is triggered by a case
+	//but golint wants a return statement
+	return false
 }
