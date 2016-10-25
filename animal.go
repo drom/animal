@@ -7,29 +7,14 @@ import (
 	"strings"
 )
 
-//types
-
-//Question ...
-type Question struct {
-	Question  string
-	YesTarget Target
-	NoTarget  Target
-}
-
-//Target ...
-type Target struct {
-	Type  string
-	Index int
-}
-
 //Data
 var animals = []string{"Fish", "Bird"}
 
 var questions = []Question{
 	Question{
 		Question:  "Does it swim",
-		YesTarget: Target{Type: "a", Index: 0},
-		NoTarget:  Target{Type: "a", Index: 1},
+		YesTarget: Target{Type: ANSWER, Index: 0},
+		NoTarget:  Target{Type: ANSWER, Index: 1},
 	},
 }
 
@@ -82,7 +67,7 @@ func askQuestions() {
 	t := askQuestion(qIndex) //Ask the first question
 
 	//ask a question or guess an animal
-	for t.Type == "q" {
+	for t.Type == QUESTION {
 		qIndex = t.Index //store this, in case t comes back as Type "a"
 		t = askQuestion(qIndex)
 	}
@@ -130,11 +115,11 @@ func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
 	var noTarget Target
 
 	if askYesNoQuestion("Please type the answer for " + withArticle(a) + ":") {
-		yesTarget = Target{Type: "a", Index: newAi}
-		noTarget = Target{Type: "a", Index: ai}
+		yesTarget = Target{Type: ANSWER, Index: newAi}
+		noTarget = Target{Type: ANSWER, Index: ai}
 	} else {
-		noTarget = Target{Type: "a", Index: newAi}
-		yesTarget = Target{Type: "a", Index: ai}
+		noTarget = Target{Type: ANSWER, Index: newAi}
+		yesTarget = Target{Type: ANSWER, Index: ai}
 	}
 
 	q = strings.TrimRight(q, "?") //we add our own ? during question time
@@ -144,11 +129,11 @@ func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
 	questions = append(questions, Question{Question: q, YesTarget: yesTarget, NoTarget: noTarget})
 
 	//amend the old question
-	if questions[qi].YesTarget.Type == "a" && questions[qi].YesTarget.Index == ai {
-		questions[qi].YesTarget.Type = "q"
+	if questions[qi].YesTarget.Type == ANSWER && questions[qi].YesTarget.Index == ai {
+		questions[qi].YesTarget.Type = QUESTION
 		questions[qi].YesTarget.Index = newQi
 	} else {
-		questions[qi].NoTarget.Type = "q"
+		questions[qi].NoTarget.Type = QUESTION
 		questions[qi].NoTarget.Index = newQi
 	}
 }
