@@ -7,38 +7,19 @@ import (
 	"strings"
 )
 
-//Data
-var animals = []string{"Fish", "Bird"}
-
-var questions = []Question{
-	Question{
-		Question:  "Does it swim",
-		YesTarget: Target{Type: ANSWER, Index: 0},
-		NoTarget:  Target{Type: ANSWER, Index: 1},
-	},
-}
-
-//properties
-
 var reader = bufio.NewReader(os.Stdin) //we'll be needing this
 
-//funcs
 func main() {
-
 	playIntroMessage()
 
 	run := true
 	for run {
-
-		//let's begin
 		fmt.Println("Are you thinking of an animal?")
 
 		switch strings.ToLower(getInput())[:1] {
 		case "n": //No
-			//Quit the game
-			run = false
+			run = false //Quit the game
 		case "l": //List
-			//output the animal list and then ask again
 			listKnownAnimals()
 		case "y": //Yes
 			askQuestions()
