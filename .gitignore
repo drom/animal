@@ -1,0 +1,3 @@
+# Go
+# don't add any temporary .exe's we build while testing ;)
+*.exe
