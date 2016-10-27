@@ -2,15 +2,13 @@ package main
 
 //Question ...
 type Question struct {
-	Question  string
-	YesTarget Target
-	NoTarget  Target
+	Question            string
+	YesTarget, NoTarget Target
 }
 
 //Target ...
 type Target struct {
-	Type  int
-	Index int
+	Type, Index int
 }
 
 // Target types

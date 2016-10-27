@@ -14,13 +14,14 @@ func main() {
 
 	run := true
 	for run {
-		fmt.Println("Are you thinking of an animal?")
+		fmt.Println(text.mood)
 
 		switch strings.ToLower(getInput())[:1] {
 		case "n": //No
+			fmt.Println(text.exit)
 			run = false //Quit the game
 		case "l": //List
-			listKnownAnimals()
+			listKnownAnswers()
 		case "y": //Yes
 			askQuestions()
 		default:
@@ -30,13 +31,12 @@ func main() {
 }
 
 func playIntroMessage() {
-	fmt.Println("Play 'Guess the Animal'")
-	fmt.Println("Think of an animal and the computer will try to guess it...")
+	fmt.Println(text.start)
 }
 
-func listKnownAnimals() {
-	fmt.Println("Animals I already know are:")
-	for _, v := range animals {
+func listKnownAnswers() {
+	fmt.Println(text.known)
+	for _, v := range answers {
 		fmt.Println(v)
 	}
 }
@@ -47,17 +47,17 @@ func askQuestions() {
 	qIndex := 0
 	t := askQuestion(qIndex) //Ask the first question
 
-	//ask a question or guess an animal
+	//ask a question or guess an answer
 	for t.Type == QUESTION {
-		qIndex = t.Index //store this, in case t comes back as Type "a"
+		qIndex = t.Index //store this, in case t comes back as Type ANSWER
 		t = askQuestion(qIndex)
 	}
 
-	if guessAnimal(t.Index) {
-		fmt.Println("Why not try another animal?")
+	if guessAnswer(t.Index) {
+		fmt.Println(text.again)
 	} else {
-		//Guess was wrong, let's learn a new animal
-		learnNewAnimal(qIndex, t.Index)
+		//Guess was wrong, let's learn a new answer
+		learnNewAnswer(qIndex, t.Index)
 	}
 }
 
@@ -75,27 +75,27 @@ func askQuestion(i int) *Target {
 	return t
 }
 
-func guessAnimal(i int) bool {
-	return askYesNoQuestion("Is your animal " + withArticle(animals[i]) + "?")
+func guessAnswer(i int) bool {
+	return askYesNoQuestion(text.isIt + withArticle(answers[i]) + "?")
 }
 
-func learnNewAnimal(qi, ai int) { //(this is kinda nasty but it works)
-	fmt.Println("What is the animal you were thinking of called?") //nicer grammar than original
+func learnNewAnswer(qi, ai int) { //(this is kinda nasty but it works)
+	fmt.Println(text.itWas)
 	a := getInput()
 
-	//add to the animals array so it has an Index
-	newAi := len(animals)
-	animals = append(animals, a)
+	//add to the answers array so it has an Index
+	newAi := len(answers)
+	answers = append(answers, a)
 
 	//build a new question
-	fmt.Println("Please type a Yes/No question that would distinguish " + withArticle(a) + " from " + withArticle(animals[ai]) + ":")
+	fmt.Println(text.differ + withArticle(a) + text.from + withArticle(answers[ai]))
 	q := getInput()
 
 	//find out which route
 	var yesTarget Target
 	var noTarget Target
 
-	if askYesNoQuestion("Please type the answer for " + withArticle(a) + ":") {
+	if askYesNoQuestion(text.answerIs + withArticle(a)) {
 		yesTarget = Target{Type: ANSWER, Index: newAi}
 		noTarget = Target{Type: ANSWER, Index: ai}
 	} else {
