@@ -6,18 +6,7 @@ class AnimalGame
   attr_accessor :msg
 
   def initialize
-    @msg = {
-      'start' => "PLAY 'GUESS THE ANIMAL'\nTHINK OF AN ANIMAL AND THE COMPUTER WILL TRY TO GUESS IT...",
-      'mood' => 'ARE YOU THINKING OF AN ANIMAL ? ',
-      'isItA' => 'IS IT A ',
-      'again' => 'WHY NOT TRY ANOTHER ANIMAL',
-      'known' => "ANIMALS I ALREADY KNOW ARE:\n",
-      'itWas' => 'THE ANIMAL YOU WERE THINKING OF WAS A ? ',
-      'differ' => 'PLEASE TYPE IN A QUESTION THAT WOULD differ A ',
-      'fromA' =>  ' FROM A ',
-      'exit' => 'O.K.  SEE YOU LATER.  HOPE YOU HAD FUN PLAYING!!',
-      'data' => ['DOES IT SWIM', 'FISH', 'BIRD']
-    }
+    @msg = JSON.load(File.open("../text.json", "r"))
   end
 
   def start
