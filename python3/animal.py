@@ -3,7 +3,7 @@
 import sys
 import json
 
-TEXT_FILE_PATH = './text.json'
+TEXT_FILE_PATH = '../text.json'
 messages = None
 
 def traverse(parent, path):
