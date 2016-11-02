@@ -6,7 +6,7 @@ class AnimalGame
   attr_accessor :msg
 
   def initialize
-    @msg = JSON.load(File.open("../text.json", "r"))
+    @msg = JSON.load(File.open(File.expand_path("../../text.json", __FILE__), "r"))
   end
 
   def start
@@ -21,7 +21,7 @@ class AnimalGame
       puts @msg['exit']
     end
   end
-  
+
   def traverse(parent, path)
     node = parent[path]
     if node.class == String
