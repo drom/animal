@@ -6,7 +6,7 @@ class AnimalGame
   attr_accessor :msg
 
   def initialize
-    @msg = JSON.load(File.open(File.expand_path("../../text.json", __FILE__), "r"))
+    @msg = JSON.load(File.open("./text.json", "r"))
   end
 
   def start
