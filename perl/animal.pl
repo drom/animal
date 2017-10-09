@@ -2,32 +2,54 @@ use strict;
 use warnings;
 use Data::Dumper;
 
-my $data = require('data.pm');
+my $store = require('data.pm');
 my $is_playing = 0;
-#print Dumper $data;
 
-
+sub ask_question {
+    my $about = shift;
+    print $store->{$about},"\n";
+}
 
 sub start_msg {
-    print $data->{'start'},"\n";
+    print $store->{'start'},"\n";
     $is_playing = 1;
 }
 
 sub exit_msg {
-    print $data->{'exit'},"\n";
+    print $store->{'exit'},"\n";
+}
+
+sub list_known_animals {
+    print join(', ',  map { (@{$_})[1,2] } @{$store->{'data'}}), "\n";
+}
+
+sub play {
+    my $about = shift;
+    ask_question($about);
+    my $answer = <STDIN>;
+    chomp $answer;
+
+    if (("$about" eq 'confirmExit') && ("$answer" =~ /[Yy]/)){
+        $is_playing = 0;
+        return;
+    }
+
+    if ("$answer" =~ /list/){
+        list_known_animals();
+        return;
+    }
+
+    if ("$answer" =~ /[Qq]/){
+        play('confirmExit');
+    }
+    else{
+        play('mood');
+    }
 }
 
 sub game_loop {
-    print "In game...\n";
     while($is_playing){
-        my $line = <STDIN>;
-        chomp $line;
-        if ("$line" eq 'Q'){
-            $is_playing = 0;
-        }
-        else{
-            print "$line\n";
-        }
+        play('mood');
     }
 }
 
