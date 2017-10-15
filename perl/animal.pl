@@ -23,6 +23,12 @@ sub list_known_animals {
     print join(', ',  map { (@{$_})[1,2] } @{$store->{'data'}}), "\n";
 }
 
+sub is_exists_question {
+  my $subject = shift;
+  my $result = grep { $_->[0] eq "$subject" } @{$store->{'data'}} ? 1 : 0;
+  return $result;
+}
+
 sub play {
     my $about = shift;
     ask_question($about);
@@ -34,13 +40,16 @@ sub play {
         return;
     }
 
-    if ("$answer" =~ /list/){
+    if ("$answer" =~ /^(?:l|list)$/i){
         list_known_animals();
         return;
     }
 
     if ("$answer" =~ /[Qq]/){
         play('confirmExit');
+    }
+    elsif (("$about" eq 'mood') && ("$answer" =~ /[Nn]/)){
+      play('confirmExit');
     }
     else{
         play('mood');
