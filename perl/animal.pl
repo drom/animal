@@ -3,16 +3,25 @@ use warnings;
 use Data::Dumper;
 
 my $store = require('data.pm');
+my @knowledges_database = @{$store->{'data'}};
 my $is_playing = 0;
 
 sub ask_question {
     my $about = shift;
     print $store->{$about},"\n";
+    my $response = <STDIN>;
+    chomp $response;
+    return $response;
 }
 
 sub start_msg {
     print $store->{'start'},"\n";
     $is_playing = 1;
+}
+
+sub play_again_msg {
+  print $store->{'again'},"\n";
+  return;
 }
 
 sub exit_msg {
@@ -31,9 +40,7 @@ sub is_exists_question {
 
 sub play {
     my $about = shift;
-    ask_question($about);
-    my $answer = <STDIN>;
-    chomp $answer;
+    my $answer = ask_question($about);
 
     if (("$about" eq 'confirmExit') && ("$answer" =~ /[Yy]/)){
         $is_playing = 0;
@@ -48,8 +55,13 @@ sub play {
     if ("$answer" =~ /[Qq]/){
         play('confirmExit');
     }
-    elsif (("$about" eq 'mood') && ("$answer" =~ /[Nn]/)){
-      play('confirmExit');
+    elsif ("$about" eq 'mood') {
+      if ("$answer" =~ /[Nn]/){
+        play('confirmExit');
+      }
+      elsif ("$answer" =~ /[Yy]/){
+        print "Let the game begin !\n";
+      }
     }
     else{
         play('mood');
