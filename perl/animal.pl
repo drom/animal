@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 use Data::Dumper;
@@ -8,7 +10,7 @@ my $is_playing = 0;
 
 sub ask_question {
     my $about = shift;
-    print $store->{$about},"\n";
+    print "$about\n";
     my $response = <STDIN>;
     chomp $response;
     return $response;
@@ -21,7 +23,6 @@ sub start_msg {
 
 sub play_again_msg {
   print $store->{'again'},"\n";
-  return;
 }
 
 sub exit_msg {
@@ -34,43 +35,63 @@ sub list_known_animals {
 
 sub is_exists_question {
   my $subject = shift;
-  my $result = grep { $_->[0] eq "$subject" } @{$store->{'data'}} ? 1 : 0;
+  my $result = (grep { $_->[0] eq "$subject" } @{$store->{'data'}}) >= 1 ? 1 : 0;
   return $result;
 }
 
 sub play {
-    my $about = shift;
-    my $answer = ask_question($about);
+    my ($about,$first,$second) = @_;
+    #print "DEBUG: $about,$first,$second => $is_playing\n";
+    my $answer = ask_question("$about");
 
-    if (("$about" eq 'confirmExit') && ("$answer" =~ /[Yy]/)){
+    if (("$about" eq 'DO YOU WANT TO EXIT?') && ("$answer" =~ /[Yy]/)){
         $is_playing = 0;
         return;
     }
-
-    if ("$answer" =~ /^(?:l|list)$/i){
-        list_known_animals();
-        return;
-    }
-
-    if ("$answer" =~ /[Qq]/){
-        play('confirmExit');
-    }
-    elsif ("$about" eq 'mood') {
-      if ("$answer" =~ /[Nn]/){
-        play('confirmExit');
-      }
-      elsif ("$answer" =~ /[Yy]/){
-        print "Let the game begin !\n";
-      }
-    }
     else{
-        play('mood');
+      if ("$answer" =~ /^(?:l|list)$/i){
+          list_known_animals();
+          return;
+      }
+      elsif ("$answer" =~ /[Qq]/){
+          play($store->{'confirmExit'},'','');
+      }
+      elsif ("$about" eq 'ARE YOU THINKING OF AN ANIMAL ? ') {
+        if ("$answer" =~ /[Nn]/){
+          play($store->{'confirmExit'},'','');
+        }
+        elsif ("$answer" =~ /[Yy]/){
+          map {
+            play(@{$_})
+           } @knowledges_database;
+        }
+      }
+      elsif(is_exists_question("$about") && ($is_playing == 1)){
+        if ("$answer" =~ /[Yy]/){
+          if (ask_question("$store->{'isItA'} $first ?") =~ /[Yy]/){
+            play_again_msg();
+            play($store->{'mood'},'','');
+          }
+        }
+        elsif("$answer" =~ /[Nn]/){
+          if (ask_question("$store->{'isItA'} $second ?") =~ /[Yy]/){
+            play_again_msg();
+            play($store->{'mood'},'','');
+          }
+        }
+        else{
+          return;
+        }
+      }
+      else{
+          play($store->{'mood'},'','');
+      }
     }
 }
 
 sub game_loop {
     while($is_playing){
-        play('mood');
+        play($store->{'mood'},'','');
     }
 }
 
