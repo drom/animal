@@ -46,7 +46,7 @@ sub play {
 
     if (("$about" eq 'DO YOU WANT TO EXIT?') && ("$answer" =~ /[Yy]/)){
         $is_playing = 0;
-        return;
+        return $is_playing;
     }
     else{
       if ("$answer" =~ /^(?:l|list)$/i){
@@ -62,7 +62,8 @@ sub play {
         }
         elsif ("$answer" =~ /[Yy]/){
           map {
-            play(@{$_})
+            my $status = play(@{$_});
+            return if $status == 0;
            } @knowledges_database;
         }
       }
