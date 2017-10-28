@@ -9,16 +9,16 @@ my @knowledges_database = @{$store->{'data'}};
 my $is_playing = 0;
 
 sub ask_question {
-    my $about = shift;
-    print "$about\n";
-    my $response = <STDIN>;
-    chomp $response;
-    return $response;
+  my $about = shift;
+  print "$about\n";
+  my $response = <STDIN>;
+  chomp $response;
+  return $response;
 }
 
 sub start_msg {
-    print $store->{'start'},"\n";
-    $is_playing = 1;
+  print $store->{'start'},"\n";
+  $is_playing = 1;
 }
 
 sub play_again_msg {
@@ -26,11 +26,17 @@ sub play_again_msg {
 }
 
 sub exit_msg {
-    print $store->{'exit'},"\n";
+  print $store->{'exit'},"\n";
 }
 
 sub list_known_animals {
-    print join(', ',  map { (@{$_})[1,2] } @{$store->{'data'}}), "\n";
+  my @known_animals;
+  foreach my $animal (sort map { (@{$_})[1,2] } @knowledges_database){
+    if (! grep {"$animal" eq "$_"} @known_animals){
+      push @known_animals, "$animal";
+    }
+  }
+  print join(', ',  @known_animals), "\n";
 }
 
 sub is_exists_question {
@@ -41,9 +47,9 @@ sub is_exists_question {
 
 sub play {
     my ($about,$first,$second) = @_;
-    #print "DEBUG: $about,$first,$second => $is_playing\n";
+    #print "DEBUG: [$about],[$first],[$second] => [$is_playing]\n";
     my $answer = ask_question("$about");
-
+    #print "DEBUG: [$answer]\n";
     if (("$about" eq 'DO YOU WANT TO EXIT?') && ("$answer" =~ /[Yy]/)){
         $is_playing = 0;
         return $is_playing;
@@ -51,38 +57,42 @@ sub play {
     else{
       if ("$answer" =~ /^(?:l|list)$/i){
           list_known_animals();
-          return;
+          play($store->{'mood'},'','');
       }
       elsif ("$answer" =~ /[Qq]/){
           play($store->{'confirmExit'},'','');
       }
       elsif ("$about" eq 'ARE YOU THINKING OF AN ANIMAL ? ') {
-        if ("$answer" =~ /[Nn]/){
+        if ("$answer" =~ /[NnQq]/){
           play($store->{'confirmExit'},'','');
+          return;
         }
         elsif ("$answer" =~ /[Yy]/){
           map {
-            my $status = play(@{$_});
-            return if $status == 0;
+            ($about,$first,$second) = @{$_};
+            my $answer = ask_question("$about");
+            if ("$answer" =~ /[Yy]/){
+              if (ask_question("$store->{'isItA'} $first ?") =~ /[Yy]/){
+                play_again_msg();
+                play($store->{'mood'},'','');
+                return;
+              }
+            }
+            elsif("$answer" =~ /[Nn]/){
+              if (ask_question("$store->{'isItA'} $second ?") =~ /[Yy]/){
+                play_again_msg();
+                play($store->{'mood'},'','');
+              }
+            }
            } @knowledges_database;
         }
-      }
-      elsif(is_exists_question("$about") && ($is_playing == 1)){
-        if ("$answer" =~ /[Yy]/){
-          if (ask_question("$store->{'isItA'} $first ?") =~ /[Yy]/){
-            play_again_msg();
-            play($store->{'mood'},'','');
-          }
-        }
-        elsif("$answer" =~ /[Nn]/){
-          if (ask_question("$store->{'isItA'} $second ?") =~ /[Yy]/){
-            play_again_msg();
-            play($store->{'mood'},'','');
-          }
-        }
-        else{
-          return;
-        }
+        my $animal = uc ask_question("$store->{'itWas'}");
+        my $question = ask_question("$store->{'differ'} $animal $store->{'fromA'} $second");
+        my $new_record = [$question, $animal, $second];
+        push @knowledges_database, $new_record;
+        play_again_msg();
+        play($store->{'mood'},'','');
+        return;
       }
       else{
           play($store->{'mood'},'','');
@@ -90,12 +100,6 @@ sub play {
     }
 }
 
-sub game_loop {
-    while($is_playing){
-        play($store->{'mood'},'','');
-    }
-}
-
 start_msg();
-game_loop();
+play($store->{'mood'},'','');
 exit_msg();
