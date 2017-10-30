@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
+use FindBin;
 
-my $data_file = 'data.pl';
+my $data_file = "$FindBin::Bin/data.pl";
 my $store = require($data_file);
 my @knowledges_database = @{$store->{'data'}};
 my $is_playing = 0;
