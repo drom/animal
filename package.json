@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "Animal game",
   "main": "index.js",
+  "bin": "animal.js",
   "scripts": {
     "test": "eslint animal.js && istanbul cover animal.js < test/test.txt"
   },
