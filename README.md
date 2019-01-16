@@ -4,6 +4,12 @@ The game from my childhood.
 
 Rewrite from BASIC GOTO-Hell into JavaScript CallBack-hell
 
+To run:
+
+```sh
+npx github:drom/animal
+```
+
 http://pdp-11.trailing-edge.com/rsts11/rsts-11-013/ANIMAL.BAS
 
 The Animal Game predates the personal computer by many years,
