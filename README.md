@@ -2,9 +2,9 @@
 
 The game from my childhood.
 
-Rewrite from BASIC GOTO-Hell into JavaScript CallBack-hell
+Rewrite from BASIC to few other languages: JS, Ruby, Python, Go.
 
-To run:
+To run JS version:
 
 ```sh
 npx github:drom/animal
