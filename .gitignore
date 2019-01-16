@@ -1,3 +1,5 @@
 # Go
 # don't add any temporary .exe's we build while testing ;)
 *.exe
+node_modules
+package-lock.json
